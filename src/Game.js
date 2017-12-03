@@ -28,7 +28,6 @@ class Game extends Component {
   
   updatePlayableSpots(){
     const { board, currentPlayer } = this.state
-    console.log(board, currentPlayer)
     this.setState({playableSpots: this.findPlayableSpots(board, currentPlayer)})    
   }  
   placePiece = ([x, y], player = this.state.currentPlayer, switchPlayers = true)=>{
@@ -40,7 +39,6 @@ class Game extends Component {
     const doesFlank = willFlankOpponent(board, player, [x, y])
     if(hasAdjacentOpponent(board, player, [x, y]) && doesFlank){
       board[x][y] = player
-      console.log(board)
       this.setState( { board } )
       this.switchPlayer()
       this.flipPieces(doesFlank)

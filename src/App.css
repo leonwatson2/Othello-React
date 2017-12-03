@@ -1,6 +1,11 @@
+body,
+html,
+#root{
+  height: 100%;  
+}
 .App {
   text-align: center;
-  height: 1000px;
+  height: 100%;
 }
 
 .App-logo {
@@ -38,9 +43,9 @@
 .box{
   width: 100%;
   height: 100%;
-  background: green;
-  border: solid 2px red; 
+  background: #123F6E;
+  border: solid 2px #3275BB; 
 }
 .playable{
-  background: #b32000
+  background: #C63B31
 }
