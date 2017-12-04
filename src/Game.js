@@ -3,17 +3,23 @@ import './App.css';
 import '../node_modules/materialize-css/dist/css/materialize.min.css'
 import { createArray, Player, hasAdjacentOpponent, willFlankOpponent } from './utils' 
 
+const BOARD_SIZE = 8
+const initialBoard = () => createArray(Player.EMPTY, BOARD_SIZE, BOARD_SIZE)
+const initialPlayer = Player.BLACK
+const DEBUG = false
+
 class Game extends Component {
   constructor(){
     super()
     this.state = {
-      board: createArray("", 8, 8),
+      board: initialBoard(),
       currentPlayer: Player.BLACK,
       playableSpots: [],
       boardHistory: [],
       options:{
         showMoves: false
-      }
+      },
+      isGameOver: false
     }
   }
   
@@ -39,29 +45,42 @@ class Game extends Component {
     const { currentPlayer, options:{ showMoves } } = this.state
     if(prevState.currentPlayer !== currentPlayer || prevState.options.showMoves !== showMoves)
       this.updatePlayableSpots()
-    if(prevState.options.showMoves !== showMoves && !showMoves)
-      this.setState({ playableSpots:[] })
+  }
+  checkGameOver = ()=>{
+    const { board, currentPlayer } = this.state
+    if(this.isGameOver(board, currentPlayer))
+      this.setState({ isGameOver: true })
+    else
+      this.setState({ isGameOver: false })
   }
   
-  
   updatePlayableSpots(){
-    const { board, currentPlayer, options:{ showMoves } } = this.state
+    const { board, currentPlayer } = this.state
       this.setState({playableSpots: this.findPlayableSpots(board, currentPlayer)})    
   }  
+
   placePiece = ([x, y], player = this.state.currentPlayer, switchPlayers = true)=>{
     let { board } = this.state
+    let newBoard = [...board]
     if(!switchPlayers){
-      board[x][y] = player
-      this.setState( { board } )
+      newBoard[x][y] = player
+      this.setState( { board:newBoard, playableSpots: this.findPlayableSpots(board, player) } )
     }
     const doesFlank = willFlankOpponent(board, player, [x, y])
-    if(hasAdjacentOpponent(board, player, [x, y]) && doesFlank){
-      board[x][y] = player
+    if((hasAdjacentOpponent(board, player, [x, y]) && doesFlank)){
+      newBoard[x][y] = player
       this.addToHistory(board)
-      this.setState( { board } )
+      this.setState( { board:newBoard } )
       this.switchPlayer()
       this.flipPieces(doesFlank)
     }
+   
+    if(DEBUG){
+      newBoard[x][y] = player
+      this.setState( { board:newBoard } )
+      this.switchPlayer()      
+    }
+    this.checkGameOver()
         
   }
   findPlayableSpots = (board, currentPlayer)=>{
@@ -76,9 +95,23 @@ class Game extends Component {
       }, [])
       return playableSpots
   }
-  
-  countPieces = ()=>{
-    const { board } = this.state
+  isGameOver = (board, currentPlayer) => {
+    const otherPlayer = Player.WHITE === currentPlayer ? Player.BLACK : Player.WHITE
+    const { blackPieces, whitePieces } = this.countPieces(board)
+    const totalPieces = blackPieces + whitePieces
+    const maxPieces = Math.pow(board.length, 2)
+    if(totalPieces === maxPieces){
+      return true
+    }
+    const numberOfPlayableSpots = this.findPlayableSpots(board, currentPlayer).length
+    const numberOfOtherPlayableSpots = this.findPlayableSpots(board, otherPlayer).length
+
+    if(numberOfPlayableSpots === 0 && numberOfOtherPlayableSpots === 0){
+      return true
+    }
+    return false
+  }
+  countPieces = (board)=>{
     return board.reduce( (allSum, row) => {
         const rowValue = row.reduce((sum, piece) => {
           if(piece === Player.BLACK){
@@ -100,32 +133,56 @@ class Game extends Component {
     })
     this.setState({ board })
   } 
-  switchPlayer(){
+  switchPlayer = () => {
     const { currentPlayer } = this.state
-     const nextPlayer = currentPlayer === Player.BLACK ? Player.WHITE : Player.BLACK
-    this.setState({ currentPlayer: nextPlayer })
+    if(!DEBUG){
+      const nextPlayer = currentPlayer === Player.BLACK ? Player.WHITE : Player.BLACK
+      this.setState({ currentPlayer: nextPlayer })
+    }else{
+      let nextPlayer;
+      switch(currentPlayer){
+        case Player.BLACK:
+          nextPlayer = Player.WHITE
+          break
+        case Player.WHITE:
+          nextPlayer = Player.EMPTY
+          break;
+        default:
+          nextPlayer = Player.BLACK
+      }
+      this.setState({ currentPlayer: nextPlayer })
+    }
+
   }
 
   restartBoard = () => {
-    this.setState({ board: createArray("", 8, 8), currentPlayer: Player.BLACK, playableSpots:[] }, ()=>{
+    this.setState({ board: initialBoard(), currentPlayer: initialPlayer, playableSpots: [] }, ()=>{
       this.placePiece([3, 3], Player.BLACK, false)
       this.placePiece([3, 4], Player.WHITE, false)
       this.placePiece([4, 3], Player.WHITE, false)
       this.placePiece([4, 4], Player.BLACK, false)
-      
     }) 
   }
   render() {
-    const { board, currentPlayer, playableSpots, options:{ showMoves } } = this.state
-    const count = this.countPieces()
+    const { board, currentPlayer, playableSpots, options:{ showMoves }, isGameOver } = this.state
+    const count = this.countPieces(board)
     return (
       <div className="App" style={
         {
-          background : currentPlayer, 
-          color: currentPlayer === Player.WHITE ? Player.BLACK : Player.WHITE }}>
+          background : (currentPlayer === Player.EMPTY) ? "#222E3B" : currentPlayer, 
+          color: currentPlayer === Player.BLACK ? Player.WHITE : Player.BLACK }}>
         <header className="App-header" >
-          <h1 className="App-title">Welcome to Othello in React</h1>
-          <button className="btn btn-waves restart" onClick = { this.restartBoard }> Play Again </button>
+          <h1 className="App-title">Welcome to Othello in React </h1>
+          {
+            isGameOver && 
+            <button className="btn btn-waves restart" onClick = { this.restartBoard }> Play Again </button>
+          }
+          {
+            (!isGameOver || DEBUG) && playableSpots.length === 0 &&
+            <button 
+            className="btn btn-waves next-player" 
+            onClick = { this.switchPlayer }> Next Player </button>
+          }
         </header>
       <label htmlFor="options-toggle" className="options-button">
       {'<'}
@@ -142,7 +199,10 @@ class Game extends Component {
         <h3 className="count">White: {count.white}</h3>      
         <h3 className="count"> Black: {count.black}</h3>
       </div>
-        {<Board board = { board } playableSpots = { showMoves ? playableSpots : [] } placePiece = { this.placePiece }/>
+        {
+        <Board board = { board } 
+                playableSpots = { showMoves ? playableSpots : [] } 
+                placePiece = { this.placePiece }/>
         }
         </div>
     );
@@ -150,7 +210,9 @@ class Game extends Component {
 }
 const Piece = ({color, onClick, playable})=>{
   return (
-    <div className={`${playable ? 'playable' : ''} box`} onClick = {onClick} style={{background:color}}></div>
+    <div className={`${playable ? 'playable' : ''} box`} 
+          onClick = {onClick} 
+          style={{background:color}}></div>
   )
 }
 
