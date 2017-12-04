@@ -14,16 +14,9 @@ export var createArray = (initialValue, length = 0, ...args) => {
 export const Player = {
     BLACK:"black",
     WHITE:"white",
-    BLUE:"BLUE",
     EMPTY:""
 }
-// const createPiece = ({player = Player.EMPTY, isEmpty = true, color = "green"} = {})=>({
-//     player,
-//     isEmpty: player === Player.EMPTY,
-//     color
-// })
-// const isPlayer = (piece, player) => 
-//{ player, isEmpty, color}
+
 export const hasAdjacentOpponent = (board, player, [x, y]) => {
     if(board[x][y] !== "")
         return false

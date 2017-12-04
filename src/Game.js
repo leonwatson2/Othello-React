@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import '../node_modules/materialize-css/dist/css/materialize.min.css'
 import { createArray, Player, hasAdjacentOpponent, willFlankOpponent } from './utils' 
 
 class Game extends Component {
@@ -8,7 +9,11 @@ class Game extends Component {
     this.state = {
       board: createArray("", 8, 8),
       currentPlayer: Player.BLACK,
-      playableSpots: []
+      playableSpots: [],
+      boardHistory: [],
+      options:{
+        showMoves: false
+      }
     }
   }
   
@@ -17,18 +22,31 @@ class Game extends Component {
     this.updatePlayableSpots()
   }
   
+  toggleShowMoves = ()=>{
+    const { options } = this.state
+    const newOptions = {
+      ...options,
+      showMoves: !options.showMoves
+    }
+    this.setState({ options: newOptions })
+  }
+  addToHistory(board){
+    const { boardHistory } = this.state
+    this.setState({ boardHistory: [...boardHistory, board] })
+  }
   
   componentDidUpdate(prevProps, prevState) {
-    const { currentPlayer } = this.state
-    if(prevState.currentPlayer !== currentPlayer)
+    const { currentPlayer, options:{ showMoves } } = this.state
+    if(prevState.currentPlayer !== currentPlayer || prevState.options.showMoves !== showMoves)
       this.updatePlayableSpots()
-    
+    if(prevState.options.showMoves !== showMoves && !showMoves)
+      this.setState({ playableSpots:[] })
   }
   
   
   updatePlayableSpots(){
-    const { board, currentPlayer } = this.state
-    this.setState({playableSpots: this.findPlayableSpots(board, currentPlayer)})    
+    const { board, currentPlayer, options:{ showMoves } } = this.state
+      this.setState({playableSpots: this.findPlayableSpots(board, currentPlayer)})    
   }  
   placePiece = ([x, y], player = this.state.currentPlayer, switchPlayers = true)=>{
     let { board } = this.state
@@ -39,6 +57,7 @@ class Game extends Component {
     const doesFlank = willFlankOpponent(board, player, [x, y])
     if(hasAdjacentOpponent(board, player, [x, y]) && doesFlank){
       board[x][y] = player
+      this.addToHistory(board)
       this.setState( { board } )
       this.switchPlayer()
       this.flipPieces(doesFlank)
@@ -87,24 +106,43 @@ class Game extends Component {
     this.setState({ currentPlayer: nextPlayer })
   }
 
-  restartBoard(){
-    this.placePiece([3, 3], Player.BLACK, false)
-    this.placePiece([3, 4], Player.WHITE, false)
-    this.placePiece([4, 3], Player.WHITE, false)
-    this.placePiece([4, 4], Player.BLACK, false)
+  restartBoard = () => {
+    this.setState({ board: createArray("", 8, 8), currentPlayer: Player.BLACK, playableSpots:[] }, ()=>{
+      this.placePiece([3, 3], Player.BLACK, false)
+      this.placePiece([3, 4], Player.WHITE, false)
+      this.placePiece([4, 3], Player.WHITE, false)
+      this.placePiece([4, 4], Player.BLACK, false)
+      
+    }) 
   }
   render() {
-    const { board, currentPlayer, playableSpots } = this.state
+    const { board, currentPlayer, playableSpots, options:{ showMoves } } = this.state
     const count = this.countPieces()
     return (
-      <div className="App">
-        <header className="App-header" style={{background : currentPlayer}}>
+      <div className="App" style={
+        {
+          background : currentPlayer, 
+          color: currentPlayer === Player.WHITE ? Player.BLACK : Player.WHITE }}>
+        <header className="App-header" >
           <h1 className="App-title">Welcome to Othello in React</h1>
+          <button className="btn btn-waves restart" onClick = { this.restartBoard }> Play Again </button>
         </header>
-
-      <h3 className="count">Black:{count.black}</h3>
-      <h3 className="count">White:{count.white}</h3>      
-        {<Board board = { board } playableSpots = { playableSpots } placePiece = { this.placePiece }/>
+      <label htmlFor="options-toggle" className="options-button">
+      {'<'}
+      </label>
+      <input type="checkbox" id="options-toggle"/>
+      <div className="options">
+        <div className="collection">
+        <div className="collection-item option" 
+              onClick={ this.toggleShowMoves }>{ !showMoves ? 'Show' : 'Hide' } Moves</div>
+        <label className="collection-item" htmlFor="options-toggle">Close</label>
+        </div>
+      </div>
+      <div className="score">
+        <h3 className="count">White: {count.white}</h3>      
+        <h3 className="count"> Black: {count.black}</h3>
+      </div>
+        {<Board board = { board } playableSpots = { showMoves ? playableSpots : [] } placePiece = { this.placePiece }/>
         }
         </div>
     );
