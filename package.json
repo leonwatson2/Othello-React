@@ -1,12 +1,14 @@
 {
   "homepage": "http://vlw2.com/othello",
   "name": "othello",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "font-awesome": "^4.7.0",
     "materialize-css": "^0.100.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-fontawesome": "^1.6.1",
     "react-scripts": "1.0.17"
   },
   "scripts": {

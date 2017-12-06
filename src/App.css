@@ -1,12 +1,16 @@
 
 .App {
+  display: grid;
   text-align: center;
+  background: #3275BB;
   height: 100%;
-  grid-template-rows: 20% 80%;
-  grid-template-columns: 15% 85% 15%;
+  grid-template-columns: 20% 60% 20%;
   grid-template-areas: "head head head" 
-                        "score score board";
+                        "w board b"
+                        "footer footer footer";
+  align-items: center;
 }
+
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
@@ -14,8 +18,8 @@
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
+  background-color: #123F6E;
+  align-self: stretch;
   padding: 20px;
   color: white;
   grid-area: head;
@@ -36,38 +40,69 @@
 
 .board{
   display: grid;
-  margin: auto;
-  grid-template: repeat(9, 8vh) / repeat(8, 8vh) ;
-  justify-content: center;
-  height:80%;
-  width:80%;
+  align-self: center;
+  justify-self: center;
+  grid-template: repeat(8, 8vh) / repeat(8, 8vh) ;
+  grid-auto-columns: 12.5vh;
+  grid-auto-rows: 12.5vh;
   grid-area: board;
 }
 @media screen and (orientation: portrait ){
   .board{
-    grid-template: repeat(9, 12vw) / repeat(8, 12vw) ;
+    grid-template: repeat(8, 12.0vw) / repeat(8, 12.0vw) ;
   
   }
 }
 .box{
-  width: 100%;
-  height: 100%;
   background: #123F6E;
-  border: solid 2px #3275BB; 
+  border: solid 2px #3275BB;
+  transition: background 1.25s; 
+  
 }
 .playable{
   background: #C63B31
 }
 .score{
-  margin: auto;
-  width: 80%;
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
+  position: relative;
   grid-area: score;
-  font-size: .5rem;
+  font-size: 10rem;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;  
+}
+.score::before{
+  content:'';
+  background: #31C66F;
+  position: absolute;
+  top: 0;
+  height: 1vw;
+  width: 0%;
+  transition: width .75s ease-in-out; 
   
 }
+.score--white{
+  grid-area: w;
+  background: white;  
+  color: black;
+}
+.score--white::before{
+  right: 0;
+}  
+.score--black{
+  grid-area: b;
+  color: white;  
+  background: black;
+}
+.score--black::before{
+  left:0
+}
+.score--active::before{
+  width: 100%;
+  transition-delay: .7s;
+}
+
 .options-button{
   position: fixed;
   top: 15px;
@@ -87,6 +122,53 @@
 .options{
   cursor: pointer
 }
+.version{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  color: darkgray;
+}
 input[type="checkbox"]:checked + .options{
   right: 0;
+}
+.collection-item{
+  display: block
+}
+
+.footer{
+  display: grid;
+  grid-template-columns: 50% 50%;
+  background: #222E3B;
+  color:darkgrey;
+  align-items: center;
+  grid-area: footer;
+  align-self: stretch;
+}
+.social-icons{
+  display: grid;
+  grid-template: repeat(1, 1fr) / repeat(2, 1fr);
+  align-items: center;
+}
+.fa-twitter{
+  grid-area: t
+}
+.fa-github{
+  grid-area: g
+}
+@media screen and (max-width: 615px){
+  .App{
+    grid-template-columns: 50% 50%;
+    grid-template-areas: "head head"
+                        "w b" 
+                        "board board"
+                        "footer footer";
+    grid-auto-rows: auto;
+  }
+  .App-header{
+    padding: 3px;
+  }
+  .score{
+    font-size: 2rem;
+    line-height: 1rem;
+  }
 }

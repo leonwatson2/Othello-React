@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import './App.css';
 import '../node_modules/materialize-css/dist/css/materialize.min.css'
 import { createArray, Player, hasAdjacentOpponent, willFlankOpponent } from './utils' 
+import { version } from '../package.json'
+import FontAwesome from 'react-fontawesome'
 
 const BOARD_SIZE = 8
 const initialBoard = () => createArray(Player.EMPTY, BOARD_SIZE, BOARD_SIZE)
 const initialPlayer = Player.BLACK
 const DEBUG = false
+const ANIMATION_DELAY = 200
 
 class Game extends Component {
   constructor(){
@@ -16,6 +19,7 @@ class Game extends Component {
       currentPlayer: Player.BLACK,
       playableSpots: [],
       boardHistory: [],
+      lastFlippedPieces: [],
       options:{
         showMoves: false
       },
@@ -70,7 +74,7 @@ class Game extends Component {
     if((hasAdjacentOpponent(board, player, [x, y]) && doesFlank)){
       newBoard[x][y] = player
       this.addToHistory(board)
-      this.setState( { board:newBoard } )
+      this.setState( { board:newBoard, lastFlippedPieces:doesFlank } )
       this.switchPlayer()
       this.flipPieces(doesFlank)
     }
@@ -129,9 +133,9 @@ class Game extends Component {
     positions.map(([x, y]) => {
       let player = board[x][y]
       board[x][y] = player === Player.BLACK ? Player.WHITE : Player.BLACK
-      return []
+      this.setState({ board })
+      
     })
-    this.setState({ board })
   } 
   switchPlayer = () => {
     const { currentPlayer } = this.state
@@ -164,13 +168,11 @@ class Game extends Component {
     }) 
   }
   render() {
-    const { board, currentPlayer, playableSpots, options:{ showMoves }, isGameOver } = this.state
+    const { board, currentPlayer, playableSpots, options:{ showMoves }, isGameOver, lastFlippedPieces } = this.state
     const count = this.countPieces(board)
+    const isWhite = currentPlayer === Player.WHITE
     return (
-      <div className="App" style={
-        {
-          background : (currentPlayer === Player.EMPTY) ? "#222E3B" : currentPlayer, 
-          color: currentPlayer === Player.BLACK ? Player.WHITE : Player.BLACK }}>
+      <div className="App">
         <header className="App-header" >
           <h1 className="App-title">Welcome to Othello in React </h1>
           {
@@ -185,7 +187,9 @@ class Game extends Component {
           }
         </header>
       <label htmlFor="options-toggle" className="options-button">
-      {'<'}
+      <FontAwesome 
+        name="navicon"
+      />
       </label>
       <input type="checkbox" id="options-toggle"/>
       <div className="options">
@@ -194,31 +198,50 @@ class Game extends Component {
               onClick={ this.toggleShowMoves }>{ !showMoves ? 'Show' : 'Hide' } Moves</div>
         <label className="collection-item" htmlFor="options-toggle">Close</label>
         </div>
+        <div className="version">v{version}</div>
       </div>
-      <div className="score">
-        <h3 className="count">White: {count.white}</h3>      
-        <h3 className="count"> Black: {count.black}</h3>
-      </div>
+        <div className={`score score--white ${isWhite ? 'score--active':''}`}><span> {count.white}</span></div>      
+        <div className={`score score--black ${isWhite ? '':'score--active'}`}><span> {count.black}</span></div>
         {
         <Board board = { board } 
                 playableSpots = { showMoves ? playableSpots : [] } 
-                placePiece = { this.placePiece }/>
+                placePiece = { this.placePiece }
+                lastFlippedPieces = { lastFlippedPieces }/>
         }
+          <div className="footer">
+            <div className="social-icons">
+                <a target="_blank"
+                    href="https://github.com/vlw0052/Othello-React">
+                  <FontAwesome 
+                    name="github"
+                    size="3x"
+                    />
+                </a>
+                <a target="_blank"
+                    href="https://twitter.com/_leonwatson2">
+                  <FontAwesome 
+                    name="twitter"
+                    size="3x"
+                  />
+                </a>
+            </div>
+          <div className="creator">Developed By: Leon Watson</div>
+          </div>
         </div>
     );
   }
 }
-const Piece = ({color, onClick, playable})=>{
+const Piece = ({ color, onClick, playable, flipDelay })=>{
   return (
     <div className={`${playable ? 'playable' : ''} box`} 
           onClick = {onClick} 
-          style={{background:color}}></div>
+          style={{background:color, 'transition-delay': `${flipDelay * ANIMATION_DELAY}ms`}}></div>
   )
 }
 
 class Board extends Component{
   render(){
-      const { board, playableSpots } = this.props
+      const { board, playableSpots, lastFlippedPieces } = this.props
     return(
         <div className="board">
         {
@@ -227,7 +250,8 @@ class Board extends Component{
               <Piece key={[x, y]} 
                 playable = { playableSpots.filter(([xed,zed])=> xed === x && zed === y).length > 0 } 
                 onClick={()=>{ this.props.placePiece([x, y]) } } 
-                color = { color } />)
+                color = { color } 
+                flipDelay = { (lastFlippedPieces.findIndex(([xed,zed]) => x === xed && y === zed) + 1) } />)
             )
           })
         }
