@@ -1,7 +1,7 @@
 {
   "homepage": "http://vlw2.com/othello",
   "name": "othello",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "font-awesome": "^4.7.0",

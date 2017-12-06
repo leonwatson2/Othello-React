@@ -118,6 +118,7 @@
   background:white;
   color: black;
   transition: right .32s ease-in;
+  z-index: 1;
 }
 .options{
   cursor: pointer
