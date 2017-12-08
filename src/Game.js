@@ -130,11 +130,10 @@ class Game extends Component {
   }
   flipPieces = (positions) => {
     let { board } = this.state
-    positions.map(([x, y]) => {
+    positions.forEach(([x, y]) => {
       let player = board[x][y]
       board[x][y] = player === Player.BLACK ? Player.WHITE : Player.BLACK
       this.setState({ board })
-      
     })
   } 
   switchPlayer = () => {
@@ -211,14 +210,16 @@ class Game extends Component {
           <div className="footer">
             <div className="social-icons">
                 <a target="_blank"
-                    href="https://github.com/vlw0052/Othello-React">
+                    href="https://github.com/vlw0052/Othello-React"
+                    rel="noopener noreferrer">
                   <FontAwesome 
                     name="github"
                     size="3x"
                     />
                 </a>
                 <a target="_blank"
-                    href="https://twitter.com/_leonwatson2">
+                    href="https://twitter.com/_leonwatson2"
+                    rel="noopener noreferrer">
                   <FontAwesome 
                     name="twitter"
                     size="3x"
@@ -235,7 +236,7 @@ const Piece = ({ color, onClick, playable, flipDelay })=>{
   return (
     <div className={`${playable ? 'playable' : ''} box`} 
           onClick = {onClick} 
-          style={{background:color, 'transition-delay': `${flipDelay * ANIMATION_DELAY}ms`}}></div>
+          style={{background:color, 'transitionDelay': `${flipDelay * ANIMATION_DELAY}ms`}}></div>
   )
 }
 
