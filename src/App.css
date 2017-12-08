@@ -1,4 +1,7 @@
 
+:root{
+  font-size: 15px;
+}
 .App {
   display: grid;
   text-align: center;
@@ -9,12 +12,6 @@
                         "w board b"
                         "footer footer footer";
   align-items: center;
-}
-
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
 }
 
 .App-header {
@@ -47,20 +44,23 @@
   grid-auto-rows: 12.5vh;
   grid-area: board;
 }
-@media screen and (orientation: portrait ){
-  .board{
-    grid-template: repeat(8, 12.0vw) / repeat(8, 12.0vw) ;
-  
-  }
-}
+
 .box{
-  background: #123F6E;
+  background: #123f6e;
   border: solid 2px #3275BB;
   transition: background 1.25s; 
   
 }
+.box:hover{
+  background: #222E3B;
+  transition-duration: .35s;
+}
+
 .playable{
-  background: #C63B31
+  background: #C63B31;
+}
+.playable:hover{
+  background: #862821;
 }
 .score{
   position: relative;
@@ -105,7 +105,6 @@
 
 .options-button{
   position: fixed;
-  top: 15px;
   right: 15px;
   font-size: 2em;
 }
@@ -144,6 +143,7 @@ input[type="checkbox"]:checked + .options{
   align-items: center;
   grid-area: footer;
   align-self: stretch;
+  padding: 2rem 0;
 }
 .social-icons{
   display: grid;
@@ -157,6 +157,10 @@ input[type="checkbox"]:checked + .options{
   grid-area: g
 }
 @media screen and (max-width: 615px){
+  
+  :root{
+    font-size: 5px;
+  }
   .App{
     grid-template-columns: 50% 50%;
     grid-template-areas: "head head"
@@ -168,8 +172,26 @@ input[type="checkbox"]:checked + .options{
   .App-header{
     padding: 3px;
   }
-  .score{
-    font-size: 2rem;
-    line-height: 1rem;
+ 
+}
+
+@media screen and (orientation: portrait ){
+  .App{
+    grid-template-columns: 50% 50%;
+    grid-template-areas: "head head"
+                        "w b" 
+                        "board board"
+                        "footer footer";
+    grid-auto-rows: auto;
   }
+  .board{
+    grid-template: repeat(8, 12.5vw) / repeat(8, 12.5vw) ;
+  
+  }
+  
+}
+@media screen and (orientation: portrait ) and (max-width: 615px){
+  .App-title{
+    width: 80%;
+  } 
 }
