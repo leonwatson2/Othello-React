@@ -4,7 +4,7 @@ import cloneDeep from 'lodash/cloneDeep'
 const initialState = {
   board: createStartBoard(),
   lastFlippedPieces: [],
-  count: { black:0, white: 0 }
+  count: { black: 2, white: 2 }
 }
 
 export default function boardReducer(state = initialState, action){
