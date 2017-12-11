@@ -49,7 +49,6 @@ export function createStartBoard(){
 }
 function flipBoardPieces(board, positions){
   return positions.reduce((oldBoard, [row, column])=>{
-    console.log(oldBoard, board)
     if(board[row][column] === "")
       return oldBoard
     const otherPlayer  = board[row][column] === Player.BLACK ? Player.WHITE : Player.BLACK

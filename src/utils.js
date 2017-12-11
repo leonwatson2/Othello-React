@@ -113,8 +113,6 @@ export const isGameOver = (board, currentPlayer) => {
     }
     const numberOfPlayableSpots = findPlayableSpots(board, currentPlayer).length
     const numberOfOtherPlayableSpots = findPlayableSpots(board, otherPlayer).length
-    console.log(numberOfOtherPlayableSpots, numberOfPlayableSpots)
-    console.log(totalPieces, white, black)
     if(numberOfPlayableSpots === 0 && numberOfOtherPlayableSpots === 0){
       return true
     }
