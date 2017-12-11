@@ -6,7 +6,7 @@ function placePiecesAt(board, positions, piece){
     })
     return newBoard
 }
-describe.skip('hasAdjacentOpponent() test', ()=>{
+describe('hasAdjacentOpponent() test', ()=>{
     
     var board;
     const player = "Black"

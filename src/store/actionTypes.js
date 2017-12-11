@@ -1,2 +1,7 @@
 export const PLAY_MOVE = 'PLAY_MOVE'
 export const RESET_BOARD = 'RESET_BOARD'
+export const NEXT_PLAYER = 'NEXT_PLAYER'
+export const FLIP_PIECES = 'FLIP_PIECES'
+export const BAD_MOVE = 'BAD_MOVE'
+export const UPDATE_GAME_OVER = 'UPDATE_GAME_OVER'
+export const TOGGLE_SHOW_MOVES = 'TOGGLE_SHOW_MOVES'

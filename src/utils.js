@@ -77,3 +77,47 @@ export const willFlankOpponent = (board, player, [x, y]) => {
     }, [])
     return result.length === 0 ? false : result
 }
+export const countPieces = (board)=>{
+    return board.reduce( (allSum, row) => {
+        const rowValue = row.reduce((sum, piece) => {
+          if(piece === Player.BLACK){
+            return { ...sum, black: sum.black + 1 }
+          }
+          else if(piece === Player.WHITE)
+          return { ...sum, white: sum.white + 1}
+          else return sum
+        }, {black:0, white:0})
+        return { black: allSum.black + rowValue.black, white: allSum.white + rowValue.white}
+      }, {black:0, white:0})
+}
+export const findPlayableSpots = (board, currentPlayer) => {
+    const playableSpots = board.reduce( (allPositions, row, i) => {
+        const rowValues = row.reduce((positions, piece, j) => {
+          if(hasAdjacentOpponent(board, currentPlayer, [i,j]) && willFlankOpponent(board, currentPlayer, [i, j])){
+            return [...positions, [i, j]]
+          }
+          return positions
+        }, [])
+        return [...allPositions, ...rowValues]
+      }, [])
+      return playableSpots
+  }
+
+export const isGameOver = (board, currentPlayer) => {
+    const otherPlayer = Player.WHITE === currentPlayer ? Player.BLACK : Player.WHITE
+    const { white, black } = countPieces(board)
+    const totalPieces = white + black
+    const maxPieces = Math.pow(board.length, 2)
+    if(totalPieces === maxPieces){
+      return true
+    }
+    const numberOfPlayableSpots = findPlayableSpots(board, currentPlayer).length
+    const numberOfOtherPlayableSpots = findPlayableSpots(board, otherPlayer).length
+    console.log(numberOfOtherPlayableSpots, numberOfPlayableSpots)
+    console.log(totalPieces, white, black)
+    if(numberOfPlayableSpots === 0 && numberOfOtherPlayableSpots === 0){
+      return true
+    }
+    return false
+  }
+  export const getNextPlayer =  (currentPlayer) => Player.BLACK === currentPlayer ? Player.WHITE : Player.BLACK
