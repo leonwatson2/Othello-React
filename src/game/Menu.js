@@ -4,6 +4,7 @@ import { version } from '../../package.json'
 import { connect } from 'react-redux';
 import { toggleShowMoves } from '../store/actions';
 import { bindActionCreators } from 'redux';
+import FontAwesome from 'react-fontawesome'
 
 export class Menu extends Component {
   static propTypes = {
@@ -13,8 +14,14 @@ export class Menu extends Component {
 
   render() {
     const { showMoves, toggleShowMoves } = this.props
-    return (
-      <div className="options">
+    return [
+      <label key="options-toggle-btn" htmlFor="options-toggle" className="options-button">
+        <FontAwesome 
+          name="navicon"
+        />
+      </label>,
+      <input key="options-toggle" type="checkbox" id="options-toggle"/>,
+      <div key="options" className="options">
         <div className="collection">
         <div className="collection-item option" 
               onClick={ toggleShowMoves }>{ !showMoves ? 'Show' : 'Hide' } Moves</div>
@@ -22,7 +29,7 @@ export class Menu extends Component {
         </div>
         <div className="version">v{version}</div>
       </div>
-    )
+    ]
   }
 }
 const mapStateToProps = state => ({

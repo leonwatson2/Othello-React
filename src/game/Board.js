@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { findPlayableSpots } from '../utils';
 import Piece from './Piece'
 import { playMove } from '../store/actions';
-import { bindActionCreators } from '../../../../../../../Library/Caches/typescript/2.6/node_modules/redux';
+import { bindActionCreators } from 'redux';
 
 class Board extends Component{
   render(){

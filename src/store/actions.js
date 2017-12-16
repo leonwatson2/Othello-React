@@ -1,4 +1,4 @@
-import { PLAY_MOVE, RESET_BOARD, NEXT_PLAYER, FLIP_PIECES, UPDATE_GAME_OVER, TOGGLE_SHOW_MOVES } from "./actionTypes";
+import { PLAY_MOVE, RESET_BOARD, NEXT_PLAYER, FLIP_PIECES, UPDATE_GAME_OVER, TOGGLE_SHOW_MOVES, SET_MULTIPLAYER } from "./actionTypes";
 
 export const playMove = (position, player) => {
    return {
@@ -32,4 +32,9 @@ export const updateGameOver = (isGameOver) => ({
 
 export const toggleShowMoves = () => ({
   type:TOGGLE_SHOW_MOVES
+})
+
+export const setMultiplayer = (bool) => ({
+  type:SET_MULTIPLAYER,
+  payload:bool
 })
