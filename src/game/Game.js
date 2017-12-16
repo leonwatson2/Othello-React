@@ -15,7 +15,6 @@ class Game extends Component {
   
   switchPlayer = () => {
     const { currentPlayer } = this.props
-
     this.props.switchPlayer( getNextPlayer(currentPlayer) )
   }
   componentWillMount = () => {
@@ -61,7 +60,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch =>({
   switchPlayer: bindActionCreators(nextPlayer, dispatch),
-  toggleShowMoves: bindActionCreators( toggleShowMoves, dispatch ),
   resetGame: bindActionCreators( resetBoard, dispatch ),
   setMultiplayer: bindActionCreators( setMultiplayer, dispatch )
 })

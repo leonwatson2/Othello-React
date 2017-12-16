@@ -2,7 +2,7 @@ import { NEXT_PLAYER } from "../actionTypes";
 import { Player } from "../../utils";
 
 const initialState = {
-  currentPlayer:Player.BLACK
+  currentPlayer: Player.BLACK
 }
 
 export default function playerReducer(state = initialState, action){

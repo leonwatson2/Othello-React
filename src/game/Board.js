@@ -1,13 +1,23 @@
 import React, {Component} from 'react'
 import { connect } from "react-redux";
-import { findPlayableSpots } from '../utils';
+import { findPlayableSpots, Player } from '../utils';
 import Piece from './Piece'
 import { playMove } from '../store/actions';
 import { bindActionCreators } from 'redux';
-
+import PropTypes from 'prop-types'
 class Board extends Component{
+  static propTypes = {
+    board: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
+    playableSpots: PropTypes.array.isRequired,
+    lastFlippedPieces: PropTypes.array.isRequired,
+    currentPlayer: PropTypes.oneOf([
+      Player.BLACK,
+      Player.WHITE
+    ]).isRequired
+  }
   render(){
       const { board, playableSpots, lastFlippedPieces, currentPlayer } = this.props
+      console.log(currentPlayer)
     return(
         <div className="board">
         {

@@ -16,8 +16,8 @@ export default class Piece extends Component {
     const { color, onClick, playable, flipDelay } = this.props
     return (
       <div className={`${playable ? 'playable' : ''} box`}
-          onClick={onClick} 
-            style={{background:color, 'transitionDelay': `${flipDelay * ANIMATION_DELAY}ms`}}></div>
+          onClick={ onClick } 
+            style={{ background:color, 'transitionDelay': `${flipDelay * ANIMATION_DELAY}ms` }}></div>
     )
   }
 }
