@@ -1,7 +1,7 @@
 import boardReducer from "./boardReducer";
 import { combineReducers } from 'redux'
 import playerReducer from "./playerReducer";
-import gameReducer from "../../game/GameReducer";
+import gameReducer from "./GameReducer";
 
 export default combineReducers({ 
                                 board:boardReducer, 

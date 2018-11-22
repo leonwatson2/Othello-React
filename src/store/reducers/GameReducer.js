@@ -1,4 +1,4 @@
-import { UPDATE_GAME_OVER, TOGGLE_SHOW_MOVES } from "../store/actionTypes";
+import { UPDATE_GAME_OVER, TOGGLE_SHOW_MOVES } from "../actionTypes";
 
 
 const initialState = {
